@@ -759,7 +759,7 @@ function app() {
           ? `Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l'Ordre des audioprothésistes du Québec (OAQ). Tu réponds uniquement à partir des documents de référence suivants. Réponds en français, de façon concise et précise. Si une information n'est pas dans les documents, dis-le clairement plutôt que d'inventer.\n\nDocuments de référence :\n\n${context}`
           : 'Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l\'OAQ. Les documents de référence n\'ont pas pu être chargés (ouvrir ce fichier via un serveur local). Indique que tu ne peux pas répondre sans les documents.';
 
-        const WORKER_URL = 'https://oaq-assistant.gelinas-audio-181.workers.dev';
+        const WORKER_URL = 'https://oaq-gestion-documentaire.gelinas-audio-181.workers.dev';
 
         const response = await fetch(WORKER_URL, {
           method: 'POST',
