@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion documentaire 2.0 — OAQ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'oaq': {
+              'dark':  '#1B5F70',
+              'mid':   '#226B80',
+              'blue':  '#45B8E4',
+              'light': '#EEF7FA',
+              'pale':  '#F5FBFD',
+            }
+          },
+          fontFamily: {
+            sans: ['-apple-system','BlinkMacSystemFont','Segoe UI','Roboto','Helvetica Neue','Arial','sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    .nav-link { transition: all 0.2s ease; }
+    .nav-link.active { background-color: #1B5F70; color: white; }
+    .phase-card { transition: all 0.3s ease; }
+    .fade-in { animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #1B5F70; border-radius: 4px; }
+    .section-anchor { scroll-margin-top: 2rem; }
+    table.brut { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    table.brut th { text-align: left; padding: 0.6rem 0.8rem; background: #1B5F70; color: white; font-weight: 600; border-bottom: 2px solid #0d3a45; }
+    table.brut td { padding: 0.6rem 0.8rem; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    table.brut tr:last-child td { border-bottom: none; }
+    .chat-bubble-user { background: #1B5F70; color: white; border-radius: 1rem 1rem 0.25rem 1rem; }
+    .chat-bubble-assistant { background: white; border: 1px solid #e5e7eb; border-radius: 1rem 1rem 1rem 0.25rem; }
+    .chat-bubble-error { background: #fff5f5; border: 1px solid #fecaca; border-radius: 1rem; }
+  </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans" x-data="app()" x-init="init()">
+
+<!-- BARRE MOBILE -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-oaq-dark text-white shadow-lg">
+  <div class="flex items-center justify-between px-4 py-3">
+    <img src="assets/logo.png" alt="OAQ" class="h-8 brightness-0 invert">
+    <button @click="mobileOpen = !mobileOpen" class="p-1">
+      <svg x-show="!mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <svg x-show="mobileOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div x-show="mobileOpen" x-cloak @click.away="mobileOpen = false" class="border-t border-white/20 bg-oaq-dark px-4 pb-4">
+    <template x-for="item in nav" :key="item.id">
+      <a :href="'#'+item.id" @click="mobileOpen = false" class="block py-2 text-sm text-white/80 hover:text-white border-b border-white/10 last:border-0" x-text="item.label"></a>
+    </template>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="hidden md:flex flex-col fixed top-0 left-0 h-full w-64 bg-oaq-dark text-white z-40 shadow-xl">
+  <div class="px-6 py-6 border-b border-white/15">
+    <img src="assets/logo.png" alt="Ordre des audioprothésistes du Québec" class="w-full brightness-0 invert opacity-95">
+    <p class="mt-3 text-xs text-white/50 uppercase tracking-widest">Gestion documentaire</p>
+    <p class="text-xs text-oaq-blue font-semibold">Version 2.0 — Printemps 2026</p>
+  </div>
+  <nav class="flex-1 overflow-y-auto py-4 px-3">
+    <template x-for="item in nav" :key="item.id">
+      <a :href="'#'+item.id"
+         class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg mb-1 text-sm text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
+         :class="{ 'active': activeSection === item.id }">
+        <span class="text-oaq-blue text-base leading-none w-5" x-text="item.num"></span>
+        <span x-text="item.label"></span>
+      </a>
+    </template>
+  </nav>
+  <div class="px-5 py-4 border-t border-white/15 text-xs text-white/40">
+    Document de travail — Direction générale
+  </div>
+</aside>
+
+<!-- CONTENU PRINCIPAL -->
+<main class="md:ml-64 pt-14 md:pt-0">
+
+  <!-- HERO -->
+  <section id="hero" class="section-anchor text-white py-16 px-8 md:px-16" style="background: linear-gradient(135deg, #0d3a45 0%, #1B5F70 55%, #1a7a8a 100%);">
+    <div class="max-w-3xl">
+      <div class="inline-block bg-white/15 text-white text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-6 border border-white/30">Document de travail — Direction générale</div>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-5">Gestion documentaire 2.0</h1>
+      <div class="w-16 h-1 bg-oaq-blue rounded mb-6"></div>
+      <p class="text-lg text-white leading-relaxed mb-5">Ce document décrit ce qui est proposé pour structurer la gestion documentaire de l'OAQ. Il présente les choix qui ont été faits, les charges de travail estimées et les questions qui ne sont pas encore tranchées.</p>
+      <p class="text-sm text-white/75 leading-relaxed">L'objectif n'est pas d'obtenir une approbation immédiate. C'est de donner suffisamment d'information pour que la direction générale forme son propre jugement et identifie ses propres questions avant la rencontre avec la présidence.</p>
+    </div>
+  </section>
+
+  <!-- 1. VUE D'ENSEMBLE -->
+  <section id="apercu" class="section-anchor py-14 px-8 md:px-16 bg-white">
+    <div class="max-w-3xl">
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">1</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Vue d'ensemble</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11"></div>
+      </div>
+
+      <h3 class="font-semibold text-gray-700 mb-3 mt-4">Ce qui est proposé</h3>
+      <p class="text-gray-700 leading-relaxed mb-4">Une structure documentaire en six phases, déployée sur environ trois ans, qui définit où les documents vivent, comment ils sont nommés, comment ils circulent entre les espaces de travail et le C.A., et comment ils sont éventuellement publiés ou archivés. Le projet utilise les outils Microsoft 365 déjà en place et n'introduit aucun nouveau logiciel.</p>
+
+      <h3 class="font-semibold text-gray-700 mb-3 mt-6">Périmètre du projet</h3>
+      <div class="grid md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-lg p-4 border border-oaq-light border-l-4 border-l-oaq-blue">
+          <p class="text-xs font-semibold text-oaq-dark uppercase tracking-wider mb-2">Inclus</p>
+          <ul class="text-sm text-gray-700 space-y-1">
+            <li>• Architecture des équipes Teams</li>
+            <li>• Nomenclature des fichiers</li>
+            <li>• Protocole de soumission au C.A.</li>
+            <li>• Gestion des canaux de projet</li>
+            <li>• Bibliothèque centrale SharePoint</li>
+            <li>• Espace documentaire du C.A.</li>
+            <li>• Registre des résolutions</li>
+            <li>• Migration des documents existants</li>
+          </ul>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Non inclus</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Courriels (Outlook)</li>
+            <li>• OneDrive personnels des employés</li>
+            <li>• Structure de publication sur Octave</li>
+            <li>• Outil d'IA — connexion conditionnée à la Phase 6</li>
+            <li>• Choix d'un système GED externe</li>
+            <li>• Numérisation des archives papier</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. LES 6 PHASES -->
+  <section id="phases" class="section-anchor py-14 px-8 md:px-16 bg-oaq-light">
+    <div class="max-w-3xl">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">2</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Les 6 phases</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 mb-8 ml-11">Chaque phase peut être ouverte pour voir le détail. Les guides complets de chaque phase existent en document séparé — accessibles via l'assistant documentaire (section 7).</p>
+      </div>
+      <div class="space-y-3">
+        <template x-for="(phase, i) in phases" :key="i">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden phase-card">
+            <button @click="phase.open = !phase.open" class="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors">
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" :style="`background-color: ${phase.color}`" x-text="phase.num"></div>
+              <div class="flex-1 min-w-0">
+                <div class="font-semibold text-gray-800" x-text="phase.title"></div>
+                <div class="text-sm text-gray-500" x-text="phase.tagline"></div>
+              </div>
+              <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="phase.open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div x-show="phase.open" x-cloak class="px-5 pb-5 fade-in">
+              <div class="border-t border-gray-100 pt-5 grid md:grid-cols-3 gap-5">
+                <div class="md:col-span-2 space-y-4">
+                  <div>
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ce que cette phase couvre</h4>
+                    <p class="text-sm text-gray-700" x-text="phase.scope"></p>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Règle fondamentale</h4>
+                    <p class="text-sm text-oaq-dark font-medium bg-oaq-dark/5 border-l-2 border-oaq-blue rounded-r-lg px-3 py-2" x-text="phase.rule"></p>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ce que ça inclut concrètement</h4>
+                    <ul class="space-y-1.5">
+                      <template x-for="d in phase.details" :key="d">
+                        <li class="text-sm text-gray-600 flex gap-2"><span class="text-oaq-blue flex-shrink-0 font-bold">·</span><span x-text="d"></span></li>
+                      </template>
+                    </ul>
+                  </div>
+                  <template x-if="phase.thresholds">
+                    <div>
+                      <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Seuils de maturité avant connexion de l'IA</h4>
+                      <div class="bg-oaq-light rounded-lg p-3 space-y-2">
+                        <template x-for="t in phase.thresholds" :key="t.indicator">
+                          <div class="flex justify-between items-start gap-4 text-xs">
+                            <span class="text-gray-700" x-text="t.indicator"></span>
+                            <span class="text-oaq-dark font-semibold flex-shrink-0" x-text="t.threshold"></span>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                  <div class="bg-amber-50 border border-amber-100 rounded-lg p-3">
+                    <h4 class="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">Trade-off à noter</h4>
+                    <p class="text-sm text-amber-900" x-text="phase.tradeoff"></p>
+                  </div>
+                </div>
+                <div class="bg-oaq-light rounded-xl p-4">
+                  <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Qui fait quoi</h4>
+                  <div class="space-y-2">
+                    <template x-for="r in phase.roles" :key="r.who">
+                      <div>
+                        <div class="text-xs font-semibold text-oaq-dark" x-text="r.who"></div>
+                        <div class="text-xs text-gray-600" x-text="r.does"></div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. DÉCISIONS PRISES -->
+  <section id="decisions" class="section-anchor py-14 px-8 md:px-16 bg-white">
+    <div class="max-w-3xl">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">3</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Décisions structurelles prises</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 mb-8 ml-11">Les choix de conception du projet, l'alternative qui a été écartée et le compromis assumé. À discuter ou à modifier.</p>
+      </div>
+
+      <div class="space-y-4">
+        <template x-for="(d, i) in decisions" :key="i">
+          <div class="bg-white rounded-xl border border-gray-100 border-l-4 border-l-oaq-blue p-5 shadow-sm">
+            <p class="font-semibold text-oaq-dark mb-2" x-text="d.choice"></p>
+            <div class="grid md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Raison</p>
+                <p class="text-gray-700" x-text="d.reason"></p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Alternative écartée</p>
+                <p class="text-gray-700" x-text="d.alt"></p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">Compromis assumé</p>
+                <p class="text-gray-700" x-text="d.tradeoff"></p>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. QUESTIONS OUVERTES -->
+  <section id="questions" class="section-anchor py-14 px-8 md:px-16 bg-oaq-light">
+    <div class="max-w-3xl">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">4</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Questions ouvertes</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 mb-8 ml-11">Ce qui n'est pas tranché et sur quoi la direction générale est invitée à se prononcer ou à orienter.</p>
+      </div>
+
+      <div class="space-y-3">
+        <template x-for="(q, i) in openQuestions" :key="i">
+          <div class="bg-white rounded-lg border border-gray-100 border-l-4 border-l-oaq-blue p-4 flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0" x-text="i+1"></div>
+            <div>
+              <p class="font-medium text-gray-800 mb-1" x-text="q.q"></p>
+              <p class="text-sm text-gray-600" x-text="q.context"></p>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CALENDRIER -->
+  <section id="calendrier" class="section-anchor py-14 px-8 md:px-16 bg-white">
+    <div class="max-w-3xl">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">5</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Calendrier prévu</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 mb-8 ml-11">Horizon de déploiement estimé. À ajuster selon les contraintes de l'équipe.</p>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white rounded-xl overflow-hidden border border-oaq-light shadow-sm">
+            <div class="h-1 bg-oaq-blue"></div>
+            <div class="p-4">
+              <div class="text-xs font-bold text-oaq-dark mb-3 pb-2 border-b border-oaq-dark/10">Année 1</div>
+              <div class="space-y-2">
+                <div class="text-xs text-gray-700">Phase 1 — Architecture Teams</div>
+                <div class="text-xs text-gray-700">Phase 2 — Nomenclature</div>
+                <div class="text-xs text-gray-700">Phase 3 — Soumission C.A.</div>
+                <div class="text-xs text-gray-700">Phase 4 — Gestion de projets</div>
+                <div class="text-xs text-gray-500 italic mt-2">+ formation de l'équipe</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl overflow-hidden border border-oaq-light shadow-sm">
+            <div class="h-1 bg-oaq-blue"></div>
+            <div class="p-4">
+              <div class="text-xs font-bold text-oaq-dark mb-3 pb-2 border-b border-oaq-dark/10">Années 1 à 2</div>
+              <div class="space-y-2">
+                <div class="text-xs text-gray-700">Phase 5 — Bibliothèque centrale</div>
+                <div class="text-xs text-gray-500">→ Migration progressive par priorité</div>
+                <div class="text-xs text-gray-500">→ PV → fiches synthèses → politiques</div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-xl overflow-hidden border border-oaq-light shadow-sm">
+            <div class="h-1 bg-oaq-blue"></div>
+            <div class="p-4">
+              <div class="text-xs font-bold text-oaq-dark mb-3 pb-2 border-b border-oaq-dark/10">Années 2 à 3</div>
+              <div class="space-y-2">
+                <div class="text-xs text-gray-700">Phase 6 — Intelligence documentaire</div>
+                <div class="text-xs text-gray-500">→ Conditionnée aux seuils de maturité</div>
+                <div class="text-xs text-gray-500">→ Choix d'outil IA à faire à ce moment</div>
+                <div class="text-xs text-gray-500 italic mt-2">Délai à réévaluer en année 2</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PROCHAINES ÉTAPES -->
+  <section id="suite" class="section-anchor py-14 px-8 md:px-16 bg-oaq-light">
+    <div class="max-w-3xl">
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">6</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Prochaines étapes</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 mb-8 ml-11">La séquence proposée. Aucune étape n'est engagée tant que la rencontre avec la présidence n'a pas eu lieu.</p>
+      </div>
+
+      <div class="space-y-0">
+        <template x-for="(s, i) in nextSteps" :key="i">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center text-sm font-bold flex-shrink-0" x-text="i+1"></div>
+              <div x-show="i < nextSteps.length - 1" class="w-0.5 bg-oaq-blue/30 flex-1 my-1"></div>
+            </div>
+            <div class="pb-5 flex-1">
+              <div class="font-semibold text-gray-800" x-text="s.title"></div>
+              <div class="text-sm text-gray-600 mt-0.5" x-text="s.desc"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="mt-6 rounded-xl p-5" style="background: linear-gradient(135deg, #0d3a45 0%, #1B5F70 100%);">
+        <p class="text-sm text-white/90">Les guides détaillés de chaque phase et le guide TI complet sont disponibles séparément dans le dossier <code class="bg-white/15 px-1.5 py-0.5 rounded text-white font-mono text-xs">contenu/</code> du projet. Ils peuvent être consultés via l'assistant documentaire ci-dessous.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. ASSISTANT DOCUMENTAIRE -->
+  <section id="assistant" class="section-anchor py-14 px-8 md:px-16 bg-white">
+    <div class="max-w-3xl">
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">7</span>
+          <h2 class="text-2xl font-bold text-oaq-dark">Assistant documentaire</h2>
+        </div>
+        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
+        <p class="text-gray-500 ml-11">Posez des questions sur le projet. L'assistant consulte uniquement les 6 guides de phase et le guide TI — il ne répond pas au-delà de ces documents.</p>
+      </div>
+
+      <!-- Clé API -->
+      <div x-show="!chatApiKey" class="bg-oaq-light border border-oaq-blue/20 rounded-xl p-5 mb-5">
+        <p class="text-sm font-semibold text-oaq-dark mb-1">Clé API Anthropic requise</p>
+        <p class="text-xs text-gray-500 mb-4">La clé est stockée uniquement dans cet onglet — elle disparaît à la fermeture. Elle n'est envoyée qu'à l'API Anthropic.</p>
+        <div class="flex gap-2">
+          <input type="password" x-model="chatKeyInput" @keydown.enter="setChatKey()" placeholder="sk-ant-api03-…" class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-oaq-blue bg-white">
+          <button @click="setChatKey()" class="px-4 py-2 bg-oaq-dark text-white text-sm rounded-lg font-semibold hover:bg-oaq-mid transition-colors">Valider</button>
+        </div>
+        <p class="text-xs text-gray-400 mt-3 italic">Ce document doit être ouvert via un serveur local (pas file://) pour que l'assistant puisse lire les fichiers Markdown.</p>
+      </div>
+
+      <!-- Zone de conversation -->
+      <div x-show="chatApiKey" x-cloak class="space-y-4">
+        <!-- Statut des fichiers -->
+        <div class="flex flex-wrap gap-1.5">
+          <template x-for="f in chatFiles" :key="f.file">
+            <div class="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border"
+                 :class="f.loaded ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-400 border-gray-200'">
+              <span :class="f.loaded ? 'text-green-500' : 'text-gray-300'" x-text="f.loaded ? '●' : '○'"></span>
+              <span x-text="f.name"></span>
+            </div>
+          </template>
+          <button @click="loadMarkdown()" x-show="chatFiles.some(f => !f.loaded)" class="text-xs px-2 py-0.5 rounded-full border border-oaq-blue/30 text-oaq-dark hover:bg-oaq-light transition-colors">Recharger</button>
+        </div>
+
+        <!-- Messages -->
+        <div class="bg-gray-50 rounded-xl border border-gray-100 p-4 space-y-3 min-h-[220px] max-h-[420px] overflow-y-auto" x-ref="chatMessages">
+          <template x-if="chatMessages.length === 0">
+            <div class="flex flex-col items-center justify-center h-40 text-center">
+              <p class="text-sm text-gray-400 mb-3">Posez une question sur le projet de gestion documentaire.</p>
+              <div class="flex flex-wrap gap-2 justify-center">
+                <button @click="chatInput = 'Comment soumettre un document au C.A. ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Comment soumettre un document au C.A. ?</button>
+                <button @click="chatInput = 'Qu\'est-ce qu\'une fiche synthèse ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Qu'est-ce qu'une fiche synthèse ?</button>
+                <button @click="chatInput = 'Qui peut déposer dans la bibliothèque centrale ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Qui peut déposer dans la bibliothèque centrale ?</button>
+              </div>
+            </div>
+          </template>
+          <template x-for="msg in chatMessages" :key="msg.id">
+            <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+              <div class="max-w-[85%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap"
+                   :class="msg.role === 'user' ? 'chat-bubble-user' : (msg.error ? 'chat-bubble-error text-red-700' : 'chat-bubble-assistant text-gray-700')"
+                   x-text="msg.content"></div>
+            </div>
+          </template>
+          <template x-if="chatLoading">
+            <div class="flex justify-start">
+              <div class="chat-bubble-assistant px-4 py-2.5 text-sm text-gray-400 animate-pulse">
+                Consultation des documents en cours…
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <!-- Saisie -->
+        <div class="flex gap-2">
+          <input type="text" x-model="chatInput" @keydown.enter="sendChat()"
+                 placeholder="Ex. : Quel est le format de nomenclature pour une politique ?"
+                 class="flex-1 text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-oaq-blue bg-white"
+                 :disabled="chatLoading">
+          <button @click="sendChat()"
+                  :disabled="chatLoading || !chatInput.trim()"
+                  class="px-4 py-2.5 bg-oaq-dark text-white text-sm rounded-xl font-semibold hover:bg-oaq-mid transition-colors disabled:opacity-40 flex-shrink-0">
+            Envoyer
+          </button>
+        </div>
+
+        <div class="flex justify-between items-center">
+          <p class="text-xs text-gray-400">Sources : 6 guides de phase + guide TI</p>
+          <button @click="resetChat()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Réinitialiser la conversation</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIED DE PAGE -->
+  <footer class="bg-oaq-dark text-white/50 text-xs py-6 px-8 md:px-16 text-center">
+    <p>Ordre des audioprothésistes du Québec — Gestion documentaire 2.0 — Printemps 2026</p>
+    <p class="mt-1">Document de travail — Direction générale</p>
+  </footer>
+
+</main>
+
+<script>
+function app() {
+  return {
+    activeSection: 'hero',
+    mobileOpen: false,
+
+    // Chat state
+    chatApiKey: sessionStorage.getItem('oaq_chat_key') || '',
+    chatKeyInput: '',
+    chatInput: '',
+    chatMessages: [],
+    chatHistory: [],
+    chatLoading: false,
+    chatMarkdown: {},
+    chatFiles: [
+      { name: 'Phase 1', file: 'phase1-architecture-teams.md', loaded: false },
+      { name: 'Phase 2', file: 'phase2-nomenclature.md', loaded: false },
+      { name: 'Phase 3', file: 'phase3-soumission-ca.md', loaded: false },
+      { name: 'Phase 4', file: 'phase4-gestion-projets.md', loaded: false },
+      { name: 'Phase 5', file: 'phase5-bibliotheque-centrale.md', loaded: false },
+      { name: 'Phase 6', file: 'phase6-intelligence-documentaire.md', loaded: false },
+      { name: 'Guide TI', file: 'guide-ti.md', loaded: false },
+    ],
+
+    nav: [
+      { id: 'apercu',     num: '1', label: 'Vue d\'ensemble' },
+      { id: 'phases',     num: '2', label: 'Les 6 phases' },
+      { id: 'decisions',  num: '3', label: 'Décisions prises' },
+      { id: 'questions',  num: '4', label: 'Questions ouvertes' },
+      { id: 'calendrier', num: '5', label: 'Calendrier' },
+      { id: 'suite',      num: '6', label: 'Prochaines étapes' },
+      { id: 'assistant',  num: '7', label: 'Assistant documentaire' },
+    ],
+
+    phases: [
+      {
+        num: '1', open: false, color: '#1B5F70',
+        title: 'Architecture Teams',
+        tagline: 'L\'organisation des équipes et des canaux',
+        scope: 'Définit les quatre types d\'espaces Teams de l\'OAQ, les canaux permanents, les canaux à accès restreint pour les évaluations confidentielles, et les règles de gouvernance des permissions. L\'objectif central : que rien ne disparaisse si quelqu\'un quitte l\'organisation.',
+        rule: 'Les permissions se gèrent au niveau de l\'équipe, jamais au niveau du canal. Un accès différent = une nouvelle équipe distincte.',
+        details: [
+          '4 types d\'équipes Teams — Général, Projets internes, Comités (un par comité), Partenaires externes',
+          '9 équipes configurées et maintenues par l\'administration TI — création réservée, jamais en libre-service',
+          'Canaux permanents — Général, Ressources, Administratif — non renommables et non supprimables',
+          '2 canaux privés pour évaluations confidentielles — CGOU (évaluation Président) et CRH (évaluation DG)',
+          'Minimum 2 propriétaires par équipe en tout temps — continuité garantie en cas de départ',
+          'Enregistrements de réunion supprimés après 60 jours — les décisions vivent dans les comptes rendus, pas dans les vidéos',
+          'Canaux archivés conservés indéfiniment en lecture seule — le contexte reste accessible des années plus tard',
+        ],
+        tradeoff: 'La règle "un accès différent = une nouvelle équipe" est plus rigide que la gestion fine canal par canal. Elle est plus simple à auditer et à maintenir, mais elle oblige à créer une équipe séparée dès qu\'un sous-groupe a des besoins d\'accès distincts.',
+        roles: [
+          { who: 'Administration TI', does: 'Crée toutes les équipes et les canaux privés' },
+          { who: 'Direction générale', does: 'Approuve les nouvelles équipes, coordonne les ajouts/retraits de membres' },
+          { who: 'Tout le personnel', does: 'Utilise les espaces existants — aucune création d\'équipe sans autorisation' },
+        ]
+      },
+      {
+        num: '2', open: false, color: '#226B80',
+        title: 'Nomenclature des fichiers',
+        tagline: 'La convention de nommage des documents',
+        scope: 'Définit la structure de nom des fichiers — format, codes de département, types de documents codifiés et statuts de version. L\'objectif : qu\'on puisse identifier le contenu, le contexte et le statut d\'un document sans l\'ouvrir, maintenant et dans dix ans.',
+        rule: 'Format : [SujetComité]-[TypeDoc]-[Sujet]-[AAAA-MM-JJ]-[Version] — sans accent, sans espace, sans point sauf avant l\'extension.',
+        details: [
+          'Exemple complet : CA-FS-otc-protheses-2025-11-15-VT.docx — lisible sans ouvrir le fichier',
+          '6 codes de département — ADM, JUR, AFPRO, COM, FIN, RH',
+          '13 codes d\'instances — CA, CAUD, CEED, CGOU, CRH, CIP, CDIS, CEDF, CIDP, CFOR, CFC, CREV, SYN',
+          '10 types de documents codifiés — POL, PV, FS, RAP, ODJ, LDIR, PRO, COMEX, COMIN, RES',
+          '3 statuts de version — VT (version de travail), VFA (version finale adoptée), VFP (version finale publiée)',
+          'Liste centrale des codes maintenue dans un fichier officiel — ne change pas sans approbation de la direction générale',
+          'Application par rigueur collective — les écarts sont détectés et corrigés, pas bloqués techniquement',
+        ],
+        tradeoff: 'La nomenclature demande une courbe d\'apprentissage de quelques semaines. Elle s\'intègre ensuite aux habitudes sans surcoût récurrent. La valeur à long terme — retrouver n\'importe quel document en quelques secondes, y compris par un outil d\'IA — dépend de la cohérence collective.',
+        roles: [
+          { who: 'Direction générale', does: 'Valide et maintient les codes officiels' },
+          { who: 'Adjointe de direction', does: 'Forme le personnel, signale et corrige les écarts' },
+          { who: 'Tout le personnel', does: 'Applique la nomenclature à chaque nouveau fichier' },
+        ]
+      },
+      {
+        num: '3', open: false, color: '#2D7A92',
+        title: 'Soumission au C.A.',
+        tagline: 'Le protocole de transfert d\'un document au conseil',
+        scope: 'Définit comment un document de projet est transmis au C.A. sans créer de doublons, avec une traçabilité complète entre le PDF soumis et le document de travail original. Couvre aussi le cycle de vie après la décision du C.A.',
+        rule: 'L\'original Word reste toujours dans le canal de projet. Seule une copie PDF — avec référence de traçabilité dans le pied de page — est transmise à l\'équipe OAQ — Conseil d\'administration.',
+        details: [
+          '2 types de dépôt — pour information (aucune résolution requise) et pour adoption (lié à un numéro de résolution)',
+          'Référence de traçabilité obligatoire dans le pied de page avant chaque export PDF : nom du canal, code projet, emplacement de l\'original',
+          'La fiche synthèse (FS) est le document central — elle résume contexte, analyse, risques et recommandation pour le C.A.',
+          'Cycle VT (soumission) → VFA (adoption) → VFP (publication) — chaque statut correspond à un événement de gouvernance',
+          'PV et fiches synthèses adoptées restent dans l\'espace C.A. — seules les politiques et lignes directrices adoptées vont en bibliothèque centrale',
+          'Les canaux de projet archivés restent accessibles — le lien de traçabilité vers l\'original ne brise jamais',
+          'Tout document soumis, qu\'il soit adopté ou rejeté, est conservé dans le canal de projet archivé',
+        ],
+        tradeoff: 'L\'ajout de la référence de traçabilité repose sur la rigueur du responsable de projet avant chaque export. L\'adjointe vérifie a posteriori — un oubli avant la soumission crée une discontinuité dans les archives du C.A.',
+        roles: [
+          { who: 'Responsable du projet', does: 'Prépare le PDF avec référence de traçabilité, le dépose dans l\'espace C.A., renomme après décision' },
+          { who: 'Adjointe de direction', does: 'Vérifie la traçabilité, dépose les VFA/VFP en bibliothèque centrale' },
+          { who: 'Direction générale', does: 'Met à jour le registre des projets après chaque décision du C.A.' },
+        ]
+      },
+      {
+        num: '4', open: false, color: '#3A8EA8',
+        title: 'Gestion de projets',
+        tagline: 'Comment on collabore au quotidien dans Teams',
+        scope: 'Définit la distinction tâche/projet, la nomenclature des canaux, les règles de communication, le registre des projets, et le processus de fermeture et d\'archivage. Clarifie quand créer un canal et comment le nommer.',
+        rule: '3 critères pour créer un canal de projet : 2 personnes ou plus collaborent activement + un livrable concret + plusieurs étapes à coordonner. Quand on doute, on crée le canal.',
+        details: [
+          'Si au moins un critère sur trois est absent → tâche : Microsoft To Do ou message Teams direct',
+          'Nomenclature des canaux : PRJ-[CodeOAQ]-[NNN] - [Nom lisible] — ex. PRJ-CA-001 - OTC prothèses CA 2026',
+          'Numéro séquentiel attribué par la direction générale — garantit l\'unicité et le lien avec le registre',
+          'Registre des projets — liste SharePoint tenue par la direction générale, liée aux canaux et aux documents soumis au C.A.',
+          'Enregistrements de réunion supprimés après 60 jours — les décisions se documentent dans les comptes rendus',
+          'Canaux archivés à la fermeture du projet — consultables en lecture seule indéfiniment, contexte intact',
+          'Revue périodique des canaux actifs et des accès externes — pour retirer les accès devenus inutiles',
+        ],
+        tradeoff: 'Le critère "quand on doute, on crée le canal" peut entraîner une prolifération initiale. La revue périodique permet de corriger après coup — mais la création d\'un canal est presque gratuite, tandis que la perte de contexte sur un projet mal documenté est coûteuse.',
+        roles: [
+          { who: 'Tout le personnel', does: 'Crée un canal quand les 3 critères sont remplis, archive à la fermeture' },
+          { who: 'Direction générale', does: 'Attribue le numéro de projet, tient le registre, coordonne la revue périodique' },
+          { who: 'Adjointe de direction', does: 'Soutient l\'archivage formel des canaux terminés' },
+        ]
+      },
+      {
+        num: '5', open: false, color: '#47A3BE',
+        title: 'Bibliothèque centrale et migration',
+        tagline: 'L\'espace documentaire officiel + migration de l\'existant',
+        scope: 'Crée deux espaces documentaires officiels distincts : la bibliothèque centrale (accessible à tous les employés) et l\'espace documentaire du C.A. (accès restreint). Définit la structure, les métadonnées, le rôle de gatekeeper et le plan de migration des documents existants.',
+        rule: 'Seuls des PDF en statut VFA ou VFP entrent dans la bibliothèque centrale. Jamais de fichiers Word. L\'adjointe de direction est la seule gatekeeper au quotidien.',
+        details: [
+          '2 espaces distincts — Bibliothèque centrale (politiques, procédures, rapports) et Espace C.A. (PV, FS, délibérations)',
+          '7 dossiers dans la bibliothèque — Administration, Affaires-juridiques, Affaires-professionnelles, Communications, Finances, Ressources-humaines, Archives-migration',
+          '10 colonnes de métadonnées — Département, Type, Date, Statut, Diffusion, Numéro de résolution, Code projet, Résumé...',
+          'Champ Diffusion — Interne / Membres (Octave) / Public — guide ce qu\'il faut faire avec le document après dépôt',
+          'Champ Résumé recommandé — 2 à 3 phrases — critique pour la Phase 6, l\'IA l\'utilise sans avoir à lire chaque document',
+          'Gatekeeper en cascade — Adjointe de direction → Présidence → Direction générale — délégation documentée pour toute absence de plus de 5 jours',
+          'Migration par priorité — PV d\'abord, fiches synthèses ensuite, politiques en dernier — sur 6 à 12 mois',
+        ],
+        tradeoff: 'Le modèle gatekeeper unique garantit la cohérence des métadonnées mais crée une dépendance forte à une personne. La chaîne de relève existe, mais elle doit être maintenue active par des rappels périodiques pour rester utilisable le moment venu.',
+        roles: [
+          { who: 'Adjointe de direction', does: 'Seule autorisée à déposer au quotidien — gatekeeper principale' },
+          { who: 'Présidence / Direction générale', does: 'Relève documentaire en cas d\'absence prolongée' },
+          { who: 'Direction générale', does: 'Valide les codes, autorise la connexion d\'un outil d\'IA (Phase 6)' },
+        ]
+      },
+      {
+        num: '6', open: false, color: '#45B8E4',
+        title: 'Intelligence documentaire',
+        tagline: 'Connexion d\'un outil d\'IA — conditionnelle',
+        scope: 'Définit la vision et les principes de connexion d\'un outil d\'IA à la bibliothèque centrale. La Phase 6 est la destination finale du projet — elle n\'est initiée que lorsque les seuils de maturité documentaire sont atteints. Le détail opérationnel (choix d\'outil, configuration) sera développé en année 2.',
+        rule: 'La connexion est autorisée par la direction générale uniquement quand les seuils sont atteints. L\'IA est connectée uniquement à la bibliothèque centrale — jamais aux canaux de projet, aux brouillons ou aux courriels.',
+        details: [
+          'Ce que l\'IA peut faire — répondre à des questions en langage naturel sur les décisions, résolutions et politiques de l\'OAQ',
+          'Exemples de requêtes — « Qu\'a décidé le C.A. sur les prothèses en vente libre depuis 2022 ? » ou « Quelle politique s\'applique à la formation continue ? »',
+          'L\'IA cite ses sources à chaque réponse — document, date, numéro de résolution',
+          'PDF convertis en Markdown pour lecture optimale — les PDF restent la référence officielle, les .md sont des copies de lecture',
+          'Ce que la qualité des phases 1 à 5 détermine — nomenclature cohérente, métadonnées complètes, résumés remplis = réponses fiables',
+          'Choix d\'outil et gouvernance à développer en année 2 — le marché évolue vite, décider trop tôt peut être contre-productif',
+        ],
+        thresholds: [
+          { indicator: 'Procès-verbaux du C.A. migrés', threshold: '100 % des 5 dernières années' },
+          { indicator: 'Métadonnées complètes', threshold: '95 % des documents en bibliothèque' },
+          { indicator: 'Champ Résumé rempli', threshold: '100 % des PV et analyses juridiques' },
+          { indicator: 'Taxonomie des sujets validée', threshold: 'Liste officielle stable depuis 6 mois' },
+          { indicator: 'Protocole de dépôt appliqué', threshold: 'Zéro dépôt sans métadonnées depuis 3 mois' },
+        ],
+        tradeoff: 'Le délai de 2 à 3 ans avant le bénéfice de l\'IA est inhérent à la logique du projet — une IA connectée à une bibliothèque mal structurée donne des réponses non fiables. Chaque effort des phases 1 à 5 est un investissement direct dans la qualité des réponses de la Phase 6.',
+        roles: [
+          { who: 'Direction générale', does: 'Autorise la connexion quand les seuils sont atteints' },
+          { who: 'Adjointe de direction', does: 'Conversion des PDF en Markdown pour l\'IA' },
+          { who: 'Tout le personnel', does: 'Interroge la bibliothèque via l\'IA pour les questions institutionnelles' },
+        ]
+      },
+    ],
+
+    decisions: [
+      {
+        choice: 'PDF uniquement en bibliothèque centrale, jamais Word',
+        reason: 'Empêcher les modifications accidentelles de documents officiels après adoption.',
+        alt: 'Garder les fichiers Word natifs en bibliothèque pour faciliter l\'édition.',
+        tradeoff: 'Aucune édition collaborative possible dans la bibliothèque. L\'édition se fait dans le canal de projet, puis le PDF est régénéré.',
+      },
+      {
+        choice: 'Une seule personne autorisée à déposer au quotidien (l\'adjointe de direction)',
+        reason: 'Garantir la cohérence des métadonnées et un point de contrôle unique sur la qualité documentaire.',
+        alt: 'Permettre à chaque département de déposer ses propres documents finaux.',
+        tradeoff: 'Dépendance forte à une personne. Compensée par une chaîne de relève (présidence, DG) qui doit être maintenue active.',
+      },
+      {
+        choice: 'Permissions au niveau de l\'équipe Teams, jamais au niveau du canal',
+        reason: 'Lisibilité et auditabilité des accès — on sait toujours exactement qui voit quoi.',
+        alt: 'Gestion fine des permissions canal par canal selon les besoins ad hoc.',
+        tradeoff: 'Un cas particulier nécessitant des permissions différentes oblige à créer une équipe distincte plutôt qu\'un simple canal privé.',
+      },
+      {
+        choice: 'Espace C.A. séparé architecturalement de la bibliothèque centrale',
+        reason: 'Clarté de la séparation des accès — pas de risque qu\'un employé voie par erreur des délibérations.',
+        alt: 'Tout dans la bibliothèque centrale avec des permissions fines sur certains dossiers.',
+        tradeoff: 'Deux espaces à connaître. Les utilisateurs des deux (DG, présidence, adjointe) passent de l\'un à l\'autre selon le type de document.',
+      },
+      {
+        choice: 'Registre des résolutions distinct des procès-verbaux',
+        reason: 'Permet de retrouver une résolution sans parcourir tous les PV — essentiel pour l\'usage futur de l\'IA.',
+        alt: 'Tout dans les PV, recherche textuelle ou index manuel.',
+        tradeoff: 'Double saisie — la résolution apparaît dans le PV et dans le registre. L\'adjointe maintient les deux à jour après chaque réunion du C.A.',
+      },
+      {
+        choice: 'Migration des documents existants par priorité, sur 6 à 12 mois',
+        reason: 'Réalisme — la migration complète en parallèle du travail courant n\'est pas absorbable.',
+        alt: 'Migration complète d\'un coup, en bloc, avant la mise en service de la bibliothèque.',
+        tradeoff: 'Période de transition pendant laquelle certains documents sont migrés et d\'autres non. La bibliothèque n\'est pas pleinement utilisable comme source unique avant la fin de la migration prioritaire.',
+      },
+    ],
+
+    openQuestions: [
+      {
+        q: 'Les comités externes et leurs documents internes vont-ils où ?',
+        context: 'Les comités (CAUD, CGOU, CRH, CIP, etc.) ont leurs propres équipes Teams. Leurs PV de comité, fiches synthèses préparatoires et brouillons restent-ils dans leur espace Teams, ou sont-ils versés à un endroit centralisé ? La structure actuelle ne tranche pas explicitement ce point pour les comités qui ne soumettent pas systématiquement au C.A.'
+      },
+      {
+        q: 'Y a-t-il un coût de licence Microsoft 365 additionnel ?',
+        context: 'La création de plusieurs équipes Teams et de bibliothèques SharePoint peut nécessiter des licences supplémentaires selon le plan actuel de l\'OAQ. À valider avec l\'administration TI avant le démarrage de la Phase 1.'
+      },
+      {
+        q: 'Comment Octave s\'intègre dans la chaîne de publication ?',
+        context: 'Le champ Diffusion = « Membres (Octave) » est défini, mais la structure de publication sur Octave reste à concevoir. Quel est le processus concret entre le dépôt en bibliothèque et la publication sur le portail ? Cette question doit être traitée avant que les premiers documents à diffusion Membres soient déposés.'
+      },
+      {
+        q: 'Le délai de 2 à 3 ans pour la Phase 6 (IA) est-il réaliste ?',
+        context: 'Dépend de deux variables : la vitesse de la migration documentaire et l\'évolution des outils d\'IA. Si les outils mûrissent vite et que la migration progresse normalement, c\'est tenable. Un point d\'évaluation à mi-parcours (année 2) permettrait de réévaluer avant d\'engager la Phase 6.'
+      },
+      {
+        q: 'Veut-on un point d\'évaluation formel à la fin de l\'année 1 ?',
+        context: 'Avant d\'engager la Phase 5 — bibliothèque centrale et migration, qui est la plus lourde — faut-il une évaluation formelle avec critères précis ? Ce point n\'est pas dans le plan actuel. Il permettrait de valider que les phases 1 à 4 sont stables avant d\'engager la charge de migration.'
+      },
+    ],
+
+    nextSteps: [
+      {
+        title: 'Lecture du document par la direction générale',
+        desc: 'Sans pression de décision. L\'objectif est de comprendre ce qui est proposé et d\'identifier ses propres questions.'
+      },
+      {
+        title: 'Notes personnelles de la direction générale',
+        desc: 'Points à clarifier, doutes, désaccords, questions absentes du document — y compris via l\'assistant documentaire (section 7).'
+      },
+      {
+        title: 'Rencontre avec la présidence',
+        desc: 'Discussion ouverte sur les décisions structurelles, les compromis et les questions ouvertes. Aucune section du document n\'est figée à ce stade.'
+      },
+      {
+        title: 'Ajustement du document',
+        desc: 'Les modifications convenues entre la direction générale et la présidence sont intégrées avant toute mise en œuvre.'
+      },
+      {
+        title: 'Évaluation à mi-parcours — fin de l\'année 1',
+        desc: 'Avant d\'engager la Phase 5 (migration et bibliothèque centrale), vérifier que les phases 1 à 4 sont stables et que l\'approche tient la route.'
+      },
+    ],
+
+    async setChatKey() {
+      if (!this.chatKeyInput.trim()) return;
+      this.chatApiKey = this.chatKeyInput.trim();
+      sessionStorage.setItem('oaq_chat_key', this.chatApiKey);
+      this.chatKeyInput = '';
+      await this.loadMarkdown();
+    },
+
+    async loadMarkdown() {
+      for (const f of this.chatFiles) {
+        try {
+          const r = await fetch(`../contenu/${f.file}`);
+          if (r.ok) {
+            this.chatMarkdown[f.file] = await r.text();
+            f.loaded = true;
+          } else {
+            f.loaded = false;
+          }
+        } catch(e) {
+          f.loaded = false;
+        }
+      }
+    },
+
+    buildContext() {
+      return this.chatFiles
+        .filter(f => this.chatMarkdown[f.file])
+        .map(f => `## ${f.name}\n\n${this.chatMarkdown[f.file]}`)
+        .join('\n\n---\n\n');
+    },
+
+    async sendChat() {
+      const q = this.chatInput.trim();
+      if (!q || this.chatLoading) return;
+      this.chatInput = '';
+
+      const userMsg = { id: Date.now(), role: 'user', content: q };
+      this.chatMessages.push(userMsg);
+      this.chatHistory.push({ role: 'user', content: q });
+      this.chatLoading = true;
+
+      this.$nextTick(() => {
+        if (this.$refs.chatMessages) {
+          this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+        }
+      });
+
+      try {
+        const context = this.buildContext();
+        const sysPrompt = context
+          ? `Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l'Ordre des audioprothésistes du Québec (OAQ). Tu réponds uniquement à partir des documents de référence suivants. Réponds en français, de façon concise et précise. Si une information n'est pas dans les documents, dis-le clairement plutôt que d'inventer.\n\nDocuments de référence :\n\n${context}`
+          : 'Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l\'OAQ. Les documents de référence n\'ont pas pu être chargés (ouvrir ce fichier via un serveur local). Indique que tu ne peux pas répondre sans les documents.';
+
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': this.chatApiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 1024,
+            system: sysPrompt,
+            messages: this.chatHistory
+          })
+        });
+
+        const data = await response.json();
+        if (data.error) throw new Error(data.error.message);
+
+        const answer = data.content[0].text;
+        this.chatMessages.push({ id: Date.now() + 1, role: 'assistant', content: answer });
+        this.chatHistory.push({ role: 'assistant', content: answer });
+      } catch(e) {
+        this.chatMessages.push({ id: Date.now() + 1, role: 'assistant', content: `Erreur : ${e.message}`, error: true });
+        this.chatHistory.pop();
+      } finally {
+        this.chatLoading = false;
+        this.$nextTick(() => {
+          if (this.$refs.chatMessages) {
+            this.$refs.chatMessages.scrollTop = this.$refs.chatMessages.scrollHeight;
+          }
+        });
+      }
+    },
+
+    resetChat() {
+      this.chatMessages = [];
+      this.chatHistory = [];
+      this.chatInput = '';
+    },
+
+    init() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            this.activeSection = entry.target.id;
+          }
+        });
+      }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+      this.$nextTick(() => {
+        document.querySelectorAll('.section-anchor[id]').forEach(el => observer.observe(el));
+      });
+
+      if (this.chatApiKey) {
+        this.loadMarkdown();
+      }
+    }
+  };
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Documents Word internes (non publiés)
+references/
+docx/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Éditeurs
+.vscode/
+*.swp
