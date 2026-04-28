@@ -384,87 +384,7 @@
       </div>
 
       <div class="mt-6 rounded-xl p-5" style="background: linear-gradient(135deg, #0d3a45 0%, #1B5F70 100%);">
-        <p class="text-sm text-white/90">Les guides détaillés de chaque phase et le guide TI complet sont disponibles séparément dans le dossier <code class="bg-white/15 px-1.5 py-0.5 rounded text-white font-mono text-xs">contenu/</code> du projet. Ils peuvent être consultés via l'assistant documentaire ci-dessous.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- 7. ASSISTANT DOCUMENTAIRE -->
-  <section id="assistant" class="section-anchor py-14 px-8 md:px-16 bg-white">
-    <div class="max-w-3xl">
-      <div class="mb-8">
-        <div class="flex items-center gap-3 mb-2">
-          <span class="w-8 h-8 rounded-full bg-oaq-dark text-white flex items-center justify-center font-bold text-sm flex-shrink-0">7</span>
-          <h2 class="text-2xl font-bold text-oaq-dark">Assistant documentaire</h2>
-        </div>
-        <div class="h-0.5 bg-oaq-blue w-10 rounded ml-11 mb-3"></div>
-        <p class="text-gray-500 ml-11">Posez des questions sur le projet. L'assistant consulte uniquement les 6 guides de phase et le guide TI — il ne répond pas au-delà de ces documents.</p>
-      </div>
-
-      <!-- Zone de conversation -->
-      <div class="space-y-4">
-        <!-- Statut des fichiers -->
-        <div class="flex flex-wrap gap-1.5">
-          <template x-for="f in chatFiles" :key="f.file">
-            <div class="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border"
-                 :class="f.loaded ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-400 border-gray-200'">
-              <span :class="f.loaded ? 'text-green-500' : 'text-gray-300'" x-text="f.loaded ? '●' : '○'"></span>
-              <span x-text="f.name"></span>
-            </div>
-          </template>
-          <button @click="loadMarkdown()" x-show="chatFiles.some(f => !f.loaded)" class="text-xs px-2 py-0.5 rounded-full border border-oaq-blue/30 text-oaq-dark hover:bg-oaq-light transition-colors">Recharger</button>
-        </div>
-
-        <!-- Messages -->
-        <div class="bg-gray-50 rounded-xl border border-gray-100 p-4 space-y-3 min-h-[220px] max-h-[420px] overflow-y-auto" x-ref="chatMessages">
-          <template x-if="chatMessages.length === 0">
-            <div class="flex flex-col items-center justify-center h-40 text-center">
-              <p class="text-sm text-gray-400 mb-3">Posez une question sur le projet de gestion documentaire.</p>
-              <div class="flex flex-wrap gap-2 justify-center">
-                <button @click="chatInput = 'Comment soumettre un document au C.A. ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Comment soumettre un document au C.A. ?</button>
-                <button @click="chatInput = 'Qu\'est-ce qu\'une fiche synthèse ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Qu'est-ce qu'une fiche synthèse ?</button>
-                <button @click="chatInput = 'Qui peut déposer dans la bibliothèque centrale ?'; sendChat()" class="text-xs px-3 py-1.5 bg-white border border-oaq-light text-oaq-dark rounded-full hover:bg-oaq-light transition-colors">Qui peut déposer dans la bibliothèque centrale ?</button>
-              </div>
-            </div>
-          </template>
-          <template x-for="msg in chatMessages" :key="msg.id">
-            <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-              <template x-if="msg.role === 'user'">
-                <div class="max-w-[80%] px-4 py-2.5 text-sm leading-relaxed chat-bubble-user" x-text="msg.content"></div>
-              </template>
-              <template x-if="msg.role !== 'user'">
-                <div class="max-w-[92%] px-4 py-3 text-sm leading-relaxed chat-md"
-                     :class="msg.error ? 'chat-bubble-error text-red-700' : 'chat-bubble-assistant text-gray-700'"
-                     x-html="renderMarkdown(msg.content)"></div>
-              </template>
-            </div>
-          </template>
-          <template x-if="chatLoading">
-            <div class="flex justify-start">
-              <div class="chat-bubble-assistant px-4 py-2.5 text-sm text-gray-400 animate-pulse">
-                Consultation des documents en cours…
-              </div>
-            </div>
-          </template>
-        </div>
-
-        <!-- Saisie -->
-        <div class="flex gap-2">
-          <input type="text" x-model="chatInput" @keydown.enter="sendChat()"
-                 placeholder="Ex. : Quel est le format de nomenclature pour une politique ?"
-                 class="flex-1 text-sm border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:border-oaq-blue bg-white"
-                 :disabled="chatLoading">
-          <button @click="sendChat()"
-                  :disabled="chatLoading || !chatInput.trim()"
-                  class="px-4 py-2.5 bg-oaq-dark text-white text-sm rounded-xl font-semibold hover:bg-oaq-mid transition-colors disabled:opacity-40 flex-shrink-0">
-            Envoyer
-          </button>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <p class="text-xs text-gray-400">Sources : 6 guides de phase + guide TI</p>
-          <button @click="resetChat()" class="text-xs text-gray-400 hover:text-gray-600 transition-colors">Réinitialiser la conversation</button>
-        </div>
+        <p class="text-sm text-white/90">Les guides détaillés de chaque phase et le guide TI complet sont disponibles séparément dans le dossier <code class="bg-white/15 px-1.5 py-0.5 rounded text-white font-mono text-xs">contenu/</code> du projet. Utilisez l'assistant documentaire (bouton en bas à droite) pour les interroger.</p>
       </div>
     </div>
   </section>
@@ -484,6 +404,7 @@ function app() {
     mobileOpen: false,
 
     // Chat state
+    chatOpen: false,
     chatInput: '',
     chatMessages: [],
     chatHistory: [],
@@ -506,7 +427,6 @@ function app() {
       { id: 'questions',  num: '4', label: 'Questions ouvertes' },
       { id: 'calendrier', num: '5', label: 'Calendrier' },
       { id: 'suite',      num: '6', label: 'Prochaines étapes' },
-      { id: 'assistant',  num: '7', label: 'Assistant documentaire' },
     ],
 
     phases: [
@@ -840,6 +760,124 @@ function app() {
   };
 }
 </script>
+
+<!-- CHATBOT FLOTTANT -->
+<div id="chat-widget">
+
+  <!-- Bouton d'ouverture -->
+  <button
+    @click="chatOpen = !chatOpen"
+    class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-transform duration-200 hover:scale-105 focus:outline-none"
+    style="background: linear-gradient(135deg, #0d3a45, #1B5F70);"
+    :title="chatOpen ? 'Fermer l\'assistant' : 'Ouvrir l\'assistant documentaire'"
+    aria-label="Assistant documentaire"
+  >
+    <svg x-show="!chatOpen" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-3 3v-3z"/></svg>
+    <svg x-show="chatOpen" class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+  </button>
+
+  <!-- Panneau de chat -->
+  <div
+    x-show="chatOpen"
+    x-cloak
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+    x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+    class="fixed bottom-24 right-6 z-50 w-96 rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
+    style="height: 520px; max-height: calc(100vh - 120px);"
+  >
+
+    <!-- En-tête -->
+    <div class="flex items-center justify-between px-4 py-3 flex-shrink-0" style="background: linear-gradient(135deg, #0d3a45, #1B5F70);">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-oaq-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span class="text-white font-semibold text-sm">Assistant documentaire</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button @click="resetChat()" title="Réinitialiser" class="text-white/50 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+        <button @click="chatOpen = false" class="text-white/50 hover:text-white transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pastilles de fichiers -->
+    <div class="flex flex-wrap gap-1.5 px-3 py-2 bg-oaq-dark/5 border-b border-gray-100 flex-shrink-0">
+      <template x-for="f in chatFiles" :key="f.file">
+        <span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium"
+          :class="f.loaded ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'">
+          <span class="w-1.5 h-1.5 rounded-full" :class="f.loaded ? 'bg-green-500' : 'bg-gray-300'"></span>
+          <span x-text="f.name"></span>
+        </span>
+      </template>
+    </div>
+
+    <!-- Messages -->
+    <div class="flex-1 overflow-y-auto px-3 py-3 space-y-3 bg-gray-50" x-ref="chatMessages">
+
+      <!-- Message de bienvenue -->
+      <template x-if="chatMessages.length === 0">
+        <div class="text-center py-6 px-4">
+          <div class="text-3xl mb-3">📄</div>
+          <p class="text-sm text-gray-500 leading-relaxed">Posez une question sur les documents de gestion documentaire. Je m'appuie uniquement sur les fichiers de référence du projet.</p>
+        </div>
+      </template>
+
+      <template x-for="msg in chatMessages" :key="msg.id">
+        <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+          <div class="max-w-[85%] px-3 py-2 text-sm leading-relaxed"
+            :class="msg.error ? 'chat-bubble-error' : (msg.role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant')">
+            <template x-if="msg.role === 'user'">
+              <span x-text="msg.content"></span>
+            </template>
+            <template x-if="msg.role !== 'user'">
+              <div class="chat-md" x-html="renderMarkdown(msg.content)"></div>
+            </template>
+          </div>
+        </div>
+      </template>
+
+      <!-- Indicateur de chargement -->
+      <template x-if="chatLoading">
+        <div class="flex justify-start">
+          <div class="chat-bubble-assistant px-3 py-2 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-oaq-blue rounded-full animate-bounce" style="animation-delay:0ms"></span>
+            <span class="w-1.5 h-1.5 bg-oaq-blue rounded-full animate-bounce" style="animation-delay:150ms"></span>
+            <span class="w-1.5 h-1.5 bg-oaq-blue rounded-full animate-bounce" style="animation-delay:300ms"></span>
+          </div>
+        </div>
+      </template>
+
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="flex items-end gap-2 px-3 py-3 border-t border-gray-100 bg-white flex-shrink-0">
+      <textarea
+        x-model="chatInput"
+        @keydown.enter.prevent="if (!$event.shiftKey) sendChat()"
+        placeholder="Posez une question… (Entrée pour envoyer)"
+        rows="1"
+        class="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-oaq-blue/30 focus:border-oaq-blue leading-relaxed"
+        style="max-height: 96px; overflow-y: auto;"
+        :disabled="chatLoading"
+      ></textarea>
+      <button
+        @click="sendChat()"
+        :disabled="chatLoading || !chatInput.trim()"
+        class="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-colors disabled:opacity-40"
+        :class="chatInput.trim() && !chatLoading ? 'bg-oaq-dark text-white hover:bg-oaq-mid' : 'bg-gray-100 text-gray-400'"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+      </button>
+    </div>
+
+  </div>
+</div>
 
 </body>
 </html>

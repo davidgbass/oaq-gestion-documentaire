@@ -1,0 +1,8 @@
+name = "oaq-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+account_id = "181993d4048dff0433756672c04b6f69"
+
+[[kv_namespaces]]
+binding = "QUESTIONS"
+id = "8f2daa53ebb845d6a78ffad615b9150f"
