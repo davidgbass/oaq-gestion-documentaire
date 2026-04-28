@@ -385,19 +385,8 @@
         <p class="text-gray-500 ml-11">Posez des questions sur le projet. L'assistant consulte uniquement les 6 guides de phase et le guide TI — il ne répond pas au-delà de ces documents.</p>
       </div>
 
-      <!-- Clé API -->
-      <div x-show="!chatApiKey" class="bg-oaq-light border border-oaq-blue/20 rounded-xl p-5 mb-5">
-        <p class="text-sm font-semibold text-oaq-dark mb-1">Clé API Anthropic requise</p>
-        <p class="text-xs text-gray-500 mb-4">La clé est stockée uniquement dans cet onglet — elle disparaît à la fermeture. Elle n'est envoyée qu'à l'API Anthropic.</p>
-        <div class="flex gap-2">
-          <input type="password" x-model="chatKeyInput" @keydown.enter="setChatKey()" placeholder="sk-ant-api03-…" class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-oaq-blue bg-white">
-          <button @click="setChatKey()" class="px-4 py-2 bg-oaq-dark text-white text-sm rounded-lg font-semibold hover:bg-oaq-mid transition-colors">Valider</button>
-        </div>
-        <p class="text-xs text-gray-400 mt-3 italic">Ce document doit être ouvert via un serveur local (pas file://) pour que l'assistant puisse lire les fichiers Markdown.</p>
-      </div>
-
       <!-- Zone de conversation -->
-      <div x-show="chatApiKey" x-cloak class="space-y-4">
+      <div class="space-y-4">
         <!-- Statut des fichiers -->
         <div class="flex flex-wrap gap-1.5">
           <template x-for="f in chatFiles" :key="f.file">
@@ -474,8 +463,6 @@ function app() {
     mobileOpen: false,
 
     // Chat state
-    chatApiKey: sessionStorage.getItem('oaq_chat_key') || '',
-    chatKeyInput: '',
     chatInput: '',
     chatMessages: [],
     chatHistory: [],
@@ -727,14 +714,6 @@ function app() {
       },
     ],
 
-    async setChatKey() {
-      if (!this.chatKeyInput.trim()) return;
-      this.chatApiKey = this.chatKeyInput.trim();
-      sessionStorage.setItem('oaq_chat_key', this.chatApiKey);
-      this.chatKeyInput = '';
-      await this.loadMarkdown();
-    },
-
     async loadMarkdown() {
       for (const f of this.chatFiles) {
         try {
@@ -780,14 +759,11 @@ function app() {
           ? `Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l'Ordre des audioprothésistes du Québec (OAQ). Tu réponds uniquement à partir des documents de référence suivants. Réponds en français, de façon concise et précise. Si une information n'est pas dans les documents, dis-le clairement plutôt que d'inventer.\n\nDocuments de référence :\n\n${context}`
           : 'Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l\'OAQ. Les documents de référence n\'ont pas pu être chargés (ouvrir ce fichier via un serveur local). Indique que tu ne peux pas répondre sans les documents.';
 
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        const WORKER_URL = 'https://oaq-assistant.gelinas-audio-181.workers.dev';
+
+        const response = await fetch(WORKER_URL, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': this.chatApiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 1024,
@@ -834,9 +810,7 @@ function app() {
         document.querySelectorAll('.section-anchor[id]').forEach(el => observer.observe(el));
       });
 
-      if (this.chatApiKey) {
-        this.loadMarkdown();
-      }
+      this.loadMarkdown();
     }
   };
 }
