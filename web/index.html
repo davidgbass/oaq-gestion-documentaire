@@ -26,6 +26,7 @@
     }
   </script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.0/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     [x-cloak] { display: none !important; }
     html { scroll-behavior: smooth; }
@@ -44,6 +45,21 @@
     .chat-bubble-user { background: #1B5F70; color: white; border-radius: 1rem 1rem 0.25rem 1rem; }
     .chat-bubble-assistant { background: white; border: 1px solid #e5e7eb; border-radius: 1rem 1rem 1rem 0.25rem; }
     .chat-bubble-error { background: #fff5f5; border: 1px solid #fecaca; border-radius: 1rem; }
+    .chat-md h1,.chat-md h2,.chat-md h3 { font-weight:700; margin:0.7rem 0 0.2rem; color:#1B5F70; }
+    .chat-md h1 { font-size:0.95rem; }
+    .chat-md h2 { font-size:0.875rem; border-bottom:1px solid #EEF7FA; padding-bottom:0.2rem; }
+    .chat-md h3 { font-size:0.85rem; }
+    .chat-md p { margin:0.35rem 0; }
+    .chat-md p:first-child { margin-top:0; }
+    .chat-md p:last-child { margin-bottom:0; }
+    .chat-md ul,.chat-md ol { padding-left:1.25rem; margin:0.35rem 0; }
+    .chat-md li { margin:0.15rem 0; }
+    .chat-md strong { font-weight:700; }
+    .chat-md code { background:#EEF7FA; color:#1B5F70; padding:0.1rem 0.35rem; border-radius:3px; font-size:0.78rem; font-family:monospace; }
+    .chat-md pre { background:#f3f7f9; border:1px solid #e0edf2; border-radius:6px; padding:0.6rem 0.8rem; overflow-x:auto; margin:0.5rem 0; }
+    .chat-md pre code { background:none; padding:0; color:#374151; font-size:0.75rem; }
+    .chat-md hr { border:none; border-top:1px solid #e5e7eb; margin:0.5rem 0; }
+    .chat-md blockquote { border-left:3px solid #45B8E4; padding-left:0.75rem; color:#6b7280; margin:0.35rem 0; }
   </style>
 </head>
 
@@ -413,9 +429,14 @@
           </template>
           <template x-for="msg in chatMessages" :key="msg.id">
             <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-              <div class="max-w-[85%] px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap"
-                   :class="msg.role === 'user' ? 'chat-bubble-user' : (msg.error ? 'chat-bubble-error text-red-700' : 'chat-bubble-assistant text-gray-700')"
-                   x-text="msg.content"></div>
+              <template x-if="msg.role === 'user'">
+                <div class="max-w-[80%] px-4 py-2.5 text-sm leading-relaxed chat-bubble-user" x-text="msg.content"></div>
+              </template>
+              <template x-if="msg.role !== 'user'">
+                <div class="max-w-[92%] px-4 py-3 text-sm leading-relaxed chat-md"
+                     :class="msg.error ? 'chat-bubble-error text-red-700' : 'chat-bubble-assistant text-gray-700'"
+                     x-html="renderMarkdown(msg.content)"></div>
+              </template>
             </div>
           </template>
           <template x-if="chatLoading">
@@ -789,6 +810,10 @@ function app() {
           }
         });
       }
+    },
+
+    renderMarkdown(content) {
+      return typeof marked !== 'undefined' ? marked.parse(content) : content;
     },
 
     resetChat() {
