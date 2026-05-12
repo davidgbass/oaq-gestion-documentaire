@@ -1,5 +1,5 @@
 # Phase 2 — Nomenclature des fichiers
-## Gestion documentaire 3.0 — OAQ
+## Gestion documentaire 2.1 — OAQ
 
 *Printemps 2026*
 
@@ -197,4 +197,4 @@ Les POL, PRO, FS, PV, COMIN qui restent à l'interne conservent uniquement leur 
 
 ---
 
-*Suite : Phase 3 — Soumission au C.A. et traçabilité documentaire*
+*Suite : Phase 3 — Soumission au C.A.*

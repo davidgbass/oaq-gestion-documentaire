@@ -1,5 +1,5 @@
 # Phase 5 — Bibliothèque centrale et migration
-## Gestion documentaire 3.0 — OAQ
+## Gestion documentaire 2.1 — OAQ
 
 *Printemps 2026*
 

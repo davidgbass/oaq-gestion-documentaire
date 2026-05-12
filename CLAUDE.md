@@ -6,7 +6,7 @@ Directives pour Claude Code sur ce projet.
 
 ## Ce qu'est ce projet
 
-Site de présentation et chatbot documentaire pour le projet **Gestion documentaire 3.0 de l'OAQ** (Ordre des audioprothésistes du Québec). 6 employés au siège social. Le site s'adresse à la direction générale et à Alice (adjointe de direction, gatekeeper documentaire).
+Site de présentation et chatbot documentaire pour le projet **Gestion documentaire 2.1 de l'OAQ** (Ordre des audioprothésistes du Québec). 6 employés au siège social. Le site s'adresse à la direction générale et à Alice (adjointe de direction, gatekeeper documentaire).
 
 ---
 
@@ -20,7 +20,7 @@ contenu/          ← Sources de vérité Markdown — c'est ici que vivent les 
   phase4-gestion-projets.md
   phase5-bibliotheque-centrale.md
   phase6-intelligence-documentaire.md   ← À supprimer quand phase6.5 est prête
-  guide-ti.md                           ← Pas encore mis à jour (v3 en attente)
+  guide-ti.md
 
 web/
   index.html      ← Site complet (HTML + Alpine.js + Tailwind CDN) — fichier unique
@@ -79,7 +79,7 @@ Ne jamais committer ces valeurs. Les gérer via `wrangler secret put` ou le dash
 ### Contenu Markdown (`contenu/`)
 
 - Langue : français québécois, ton professionnel sans jargon excessif
-- Titres : `# Phase N — Titre` en tête, `## Gestion documentaire 3.0 — OAQ` en sous-titre
+- Titres : `# Phase N — Titre` en tête, `## Gestion documentaire 2.1 — OAQ` en sous-titre
 - Tableaux : utiliser quand ils aident à la lecture ; supprimer quand la prose suffit
 - Pas de tableaux « Responsabilités » ni « Règles de gouvernance » formels — une phrase en prose suffit
 - Pas de revues trimestrielles — annuelles seulement
@@ -106,8 +106,6 @@ Ne jamais committer ces valeurs. Les gérer via `wrangler secret put` ou le dash
 
 - [ ] **Phase 6 — Supprimer** `contenu/phase6-intelligence-documentaire.md` quand `phase6.5-wiki-compoundant.md` est prêt (recouvert par 6.5)
 - [ ] **Phase 6.5 — Créer** `contenu/phase6.5-wiki-compoundant.md` : migration OAQ-v2 vers SharePoint (3 sites cibles, pipeline OneDrive Sync) — ~300-400 lignes
-- [ ] **Guide TI — Mettre à jour** `contenu/guide-ti.md` : cohérence v3 (1 canal Général, registre 4 colonnes, métadonnées 5 colonnes, suppression canaux privés comme procédure distincte)
-- [ ] **web/index.html** : supprimer la section « seuils de maturité » (supprimée de phase5 en v3)
 
 ---
 
