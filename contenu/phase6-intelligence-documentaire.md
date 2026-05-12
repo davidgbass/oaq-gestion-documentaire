@@ -1,5 +1,5 @@
 # Phase 6 — Intelligence documentaire
-## Gestion documentaire 2.0 — OAQ
+## Gestion documentaire 2.1 — OAQ
 
 *Printemps 2026*
 

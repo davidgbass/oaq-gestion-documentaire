@@ -107,7 +107,6 @@ Ne jamais committer ces valeurs. Les gérer via `wrangler secret put` ou le dash
 - [ ] **Phase 6 — Supprimer** `contenu/phase6-intelligence-documentaire.md` quand `phase6.5-wiki-compoundant.md` est prêt (recouvert par 6.5)
 - [ ] **Phase 6.5 — Créer** `contenu/phase6.5-wiki-compoundant.md` : migration OAQ-v2 vers SharePoint (3 sites cibles, pipeline OneDrive Sync) — ~300-400 lignes
 - [ ] **Guide TI — Mettre à jour** `contenu/guide-ti.md` : cohérence v3 (1 canal Général, registre 4 colonnes, métadonnées 5 colonnes, suppression canaux privés comme procédure distincte)
-- [ ] **web/index.html** : mettre à jour les mentions « 2.0 » → « 3.0 » dans le hero, le titre et le system prompt du chatbot
 - [ ] **web/index.html** : supprimer la section « seuils de maturité » (supprimée de phase5 en v3)
 
 ---

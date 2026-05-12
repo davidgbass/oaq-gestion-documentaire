@@ -1,5 +1,5 @@
 # Guide TI — Configuration Microsoft 365
-## Gestion documentaire 2.0 — OAQ
+## Gestion documentaire 2.1 — OAQ
 
 *Printemps 2026*
 
@@ -7,7 +7,7 @@
 
 ## Contexte et portée
 
-Ce document est destiné à l'administration TI responsable de la configuration Microsoft 365 de l'OAQ. Il décrit les tâches techniques nécessaires pour supporter les phases 1 à 5 du projet Gestion documentaire 2.0. L'approche est volontairement minimaliste : on configure ce qui est nécessaire, sans automatisation complexe.
+Ce document est destiné à l'administration TI responsable de la configuration Microsoft 365 de l'OAQ. Il décrit les tâches techniques nécessaires pour supporter les phases 1 à 5 du projet Gestion documentaire 2.1. L'approche est volontairement minimaliste : on configure ce qui est nécessaire, sans automatisation complexe.
 
 ### Environnement technique requis
 

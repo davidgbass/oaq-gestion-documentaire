@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestion documentaire 2.0 — OAQ</title>
+  <title>Gestion documentaire 2.1 — OAQ</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -84,7 +84,7 @@
   <div class="px-6 py-6 border-b border-white/15">
     <img src="assets/logo.png" alt="Ordre des audioprothésistes du Québec" class="w-full brightness-0 invert opacity-95">
     <p class="mt-3 text-xs text-white/50 uppercase tracking-widest">Gestion documentaire</p>
-    <p class="text-xs text-oaq-blue font-semibold">Version 2.0 — Printemps 2026</p>
+    <p class="text-xs text-oaq-blue font-semibold">Version 2.1 — Printemps 2026</p>
   </div>
   <nav class="flex-1 overflow-y-auto py-4 px-3">
     <template x-for="item in nav" :key="item.id">
@@ -111,7 +111,7 @@
         <div class="inline-block bg-oaq-blue/20 text-oaq-blue text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full">Document de présentation — Direction générale</div>
         <div class="inline-block bg-white/10 text-white/60 text-xs px-3 py-1 rounded-full">Lecture estimée : 20 minutes</div>
       </div>
-      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Gestion documentaire 2.0</h1>
+      <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">Gestion documentaire 2.1</h1>
       <p class="text-xl text-white/80 leading-relaxed mb-8">Un système simple, robuste et pérenne pour la mémoire institutionnelle de l'OAQ — conçu pour durer dix ans et s'adapter à l'intelligence artificielle.</p>
       <div class="flex flex-wrap gap-3">
         <a href="#defi" class="bg-white text-oaq-dark font-semibold px-5 py-2.5 rounded-lg hover:bg-oaq-light transition-colors text-sm">Commencer la lecture →</a>
@@ -192,7 +192,7 @@
         </div>
       </div>
       <div class="mt-8 bg-oaq-light border-l-4 border-oaq-dark rounded-r-xl p-5">
-        <p class="text-oaq-dark font-medium">La Gestion documentaire 2.0 résout ces trois problèmes en instaurant un système structuré, graduel et conçu dès le départ pour fonctionner avec l'intelligence artificielle.</p>
+        <p class="text-oaq-dark font-medium">La Gestion documentaire 2.1 résout ces trois problèmes en instaurant un système structuré, graduel et conçu dès le départ pour fonctionner avec l'intelligence artificielle.</p>
       </div>
     </div>
   </section>
@@ -628,7 +628,7 @@
 
   <!-- PIED DE PAGE -->
   <footer class="bg-oaq-dark text-white/50 text-xs py-6 px-8 md:px-16 text-center">
-    <p>Ordre des audioprothésistes du Québec — Gestion documentaire 2.0 — Printemps 2026</p>
+    <p>Ordre des audioprothésistes du Québec — Gestion documentaire 2.1 — Printemps 2026</p>
     <p class="mt-1">Document confidentiel — à l'intention de la direction générale</p>
   </footer>
 
@@ -678,7 +678,7 @@ function app() {
         open: false,
         answer: `
           <p><strong>Oui — pour trois raisons concrètes.</strong></p>
-          <p><strong>1. Changer de plateforme serait le vrai risque.</strong> Microsoft 365 est déjà en place à l'OAQ — Teams, SharePoint et Word sont les outils du quotidien. Migrer vers un autre système imposerait une courbe d'apprentissage, des coûts d'implantation et une migration de données. La Gestion documentaire 2.0 n'ajoute aucun nouvel outil : elle structure ce qu'on a déjà.</p>
+          <p><strong>1. Changer de plateforme serait le vrai risque.</strong> Microsoft 365 est déjà en place à l'OAQ — Teams, SharePoint et Word sont les outils du quotidien. Migrer vers un autre système imposerait une courbe d'apprentissage, des coûts d'implantation et une migration de données. La Gestion documentaire 2.1 n'ajoute aucun nouvel outil : elle structure ce qu'on a déjà.</p>
           <p><strong>2. Les solutions professionnelles sont conçues pour des organisations 20 fois plus grandes.</strong> Les systèmes GED dédiés sont calibrés pour des équipes de 100+ personnes avec un département TI dédié. Ce système est délibérément simple : 5 employés, une seule personne responsable des dépôts, aucune automatisation complexe.</p>
           <p><strong>3. Sans fondation structurée aujourd'hui, l'IA sera inaccessible demain.</strong> Connecter un outil d'intelligence artificielle à des documents non structurés ne fonctionne pas — ou donne des résultats non fiables. La structure mise en place maintenant est exactement ce qu'il faut pour connecter l'IA quand l'OAQ sera prête, sans refaire tout le travail.</p>
         `
@@ -941,8 +941,8 @@ function app() {
       try {
         const context = this.buildContext();
         const sysPrompt = context
-          ? `Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l'Ordre des audioprothésistes du Québec (OAQ). Tu réponds uniquement à partir des documents de référence suivants. Réponds en français, de façon concise et précise. Si une information n'est pas dans les documents, dis-le clairement plutôt que d'inventer.\n\nDocuments de référence :\n\n${context}`
-          : 'Tu es un assistant documentaire pour le projet de gestion documentaire 2.0 de l\'OAQ. Les documents de référence n\'ont pas pu être chargés (ouvrir ce fichier via un serveur local). Indique que tu ne peux pas répondre sans les documents.';
+          ? `Tu es un assistant documentaire pour le projet de gestion documentaire 2.1 de l'Ordre des audioprothésistes du Québec (OAQ). Tu réponds uniquement à partir des documents de référence suivants. Réponds en français, de façon concise et précise. Si une information n'est pas dans les documents, dis-le clairement plutôt que d'inventer.\n\nDocuments de référence :\n\n${context}`
+          : 'Tu es un assistant documentaire pour le projet de gestion documentaire 2.1 de l\'OAQ. Les documents de référence n\'ont pas pu être chargés (ouvrir ce fichier via un serveur local). Indique que tu ne peux pas répondre sans les documents.';
 
         const WORKER_URL = 'https://oaq-api.gelinas-audio-181.workers.dev';
 
