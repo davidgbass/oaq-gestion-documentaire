@@ -1,5 +1,5 @@
 # Phase 2 — Nomenclature des fichiers
-## Gestion documentaire 2.0 — OAQ
+## Gestion documentaire 3.0 — OAQ
 
 *Printemps 2026*
 
@@ -13,19 +13,27 @@ La standardisation assure aussi la pérennité de la mémoire organisationnelle 
 
 ---
 
-## Structure de nomenclature
+## Principe central : deux noms, deux publics
+
+La nomenclature codée décrite ici s'applique à la **production interne et à la conservation** des documents. Elle est conçue pour Alice, l'équipe interne et les outils de recherche (humains ou IA).
+
+Les documents diffusés aux membres ou au public sont **republiés sous un nom lisible distinct** (voir section *Noms publics* en fin de phase). Les membres et le public reçoivent un nom qui communique la valeur du document, pas son histoire administrative.
+
+---
+
+## Structure de nomenclature interne
 
 ```
 [SujetComité]-[TypeDoc]-[Sujet]-[AAAA-MM-JJ]-[Version]
 ```
 
-**Principe fondamental :** le nom d'un fichier doit permettre d'identifier son contenu, son contexte et son statut sans avoir à l'ouvrir. Il doit être court, sans accents, sans espaces, sans points (sauf avant l'extension) et sans barres de soulignement.
+**Principe :** le nom d'un fichier doit permettre d'identifier son contenu, son contexte et son statut sans avoir à l'ouvrir. Il est court, sans accents, sans espaces, sans points (sauf avant l'extension) et sans barres de soulignement.
 
 ---
 
 ## 1. Sujet ou comité (SujetComité)
 
-Chaque document est associé à un département ou à une instance de l'OAQ. Ces codes sont fixes et ne peuvent être modifiés sans l'approbation de la direction générale. Ils servent également de métadonnées dans SharePoint.
+Chaque document est associé à un département ou à une instance de l'OAQ. Ces codes sont fixes.
 
 ### Départements
 
@@ -33,7 +41,7 @@ Chaque document est associé à un département ou à une instance de l'OAQ. Ces
 |---|---|
 | Administration générale | ADM |
 | Affaires juridiques | JUR |
-| Affaires professionnelles | AFPRO |
+| Affaires professionnelles | PRO |
 | Communications | COM |
 | Finances | FIN |
 | Ressources humaines | RH |
@@ -59,7 +67,7 @@ Chaque document est associé à un département ou à une instance de l'OAQ. Ces
 > **Pourquoi des codes fixes ?**
 > Un code qui change rend introuvables tous les documents créés avec l'ancien code. La stabilité des codes est ce qui permet à la nomenclature de fonctionner dans dix ans comme aujourd'hui.
 
-Toute demande d'ajout ou de modification d'un code doit être adressée à la direction générale. Aucun employé ne peut créer un nouveau code de façon autonome.
+Demander à la DG avant d'ajouter un code.
 
 ---
 
@@ -83,28 +91,19 @@ Les abréviations de types de documents s'appliquent aux documents récurrents e
 | Rapport | RAP |
 | Résolution | RES |
 
+### Note sur la redondance visuelle COM-COMEX, AFPRO-COMEX, etc.
+
+Quand un document est une communication externe officielle émise par un département, son nom contient à la fois le code du département (émetteur) et le code TypeDoc (catégorie). Les deux codes portent deux informations distinctes — la redondance est visuelle, pas sémantique. `COM-COMEX-...` indique « Communications émet une communication externe officielle » ; `AFPRO-COMEX-...` indique « Affaires professionnelles émet une communication externe officielle ». Cette distinction est utile pour filtrer par département émetteur sans perdre la catégorie du document.
+
 ---
 
 ## 3. Sujet
 
-Le champ Sujet identifie le contenu spécifique du document. Il constitue également une métadonnée de recherche dans SharePoint.
+Le champ Sujet identifie le contenu spécifique du document.
 
-**Règles de rédaction :**
+**Règles de rédaction :** 2 à 3 mots-clés maximum, chiffres en chiffres, mots courts et significatifs, acronymes reconnus (OTC, OPSO, LSSSS), tiret comme séparateur. Pas d'accents, pas d'espaces, pas de barres de soulignement, pas de points à l'intérieur du nom, pas de mots vides (le, la, les, du, des), pas de phrases complètes.
 
-- Utiliser 2 ou 3 mots-clés maximum
-- Écrire les chiffres en chiffres
-- Choisir des mots courts et significatifs
-- Utiliser des acronymes reconnus (ex. : OTC, OPSO, LSSSS)
-- Séparer les mots par un tiret ( - )
-
-**À éviter absolument :**
-
-- Les mots vides : le, la, les, du, des, un, une…
-- Les lettres accentuées (é, à, û, î, ô)
-- Les espaces
-- Les barres de soulignement ( _ )
-- Les points à l'intérieur du nom
-- Les phrases complètes ou les titres longs
+**Le sujet est toujours présent, même pour les PV et ODJ.** Pour un PV de réunion régulière du C.A. du 14 septembre 2025, le nom est `CAUD-PV-2025-09-14-reguliere-VT.docx` — le sujet `reguliere` (ou `extraordinaire`, `huis-clos`, etc.) distingue les types de réunions et reste lisible pour l'humain comme pour l'IA.
 
 > **Pourquoi le sujet doit-il être stable dans le temps ?**
 > Le dossier des prothèses auditives en vente libre doit toujours s'écrire de la même façon (ex. : OTC-protheses). Si chaque employé choisit ses propres mots, une recherche ne retrouvera qu'une partie des documents pertinents. La direction générale valide et stabilise la liste des sujets récurrents — voir Phase 5.
@@ -128,9 +127,7 @@ Le champ Sujet identifie le contenu spécifique du document. Il constitue égale
 ## 5. Version
 
 > **Pourquoi codifier les versions ?**
-> Un document s'appelle « rapport-OTC.docx » que ce soit un brouillon ou la version finale adoptée par le C.A. Sans suffixe de version, on ne sait pas si on lit la version officielle ou un brouillon de travail.
-
-Le suffixe de version indique l'état du document dans son cycle de vie. Les étapes ne sont pas toutes obligatoires : un document peut passer directement de VT à VFA selon sa nature.
+> Sans suffixe, on ne sait pas si on lit la version officielle ou un brouillon.
 
 | Version | Code | Description |
 |---|---|---|
@@ -138,7 +135,7 @@ Le suffixe de version indique l'état du document dans son cycle de vie. Les ét
 | Version finale adoptée | VFA | Adopté par le C.A. ou un comité compétent |
 | Version finale publiée | VFP | Diffusé officiellement à l'interne ou à l'externe |
 
-**Important :** il n'est pas nécessaire d'ajouter un numéro après le code de version (ex. : VT2, VT3). Le versionnage natif de SharePoint conserve l'historique complet des versions antérieures sans modifier le nom du fichier.
+**Important :** pas de numéro après le code de version (VT2, VT3). Le versionnage natif de SharePoint conserve l'historique complet.
 
 ---
 
@@ -148,10 +145,8 @@ Le suffixe de version indique l'état du document dans son cycle de vie. Les ét
 
 | Version à éviter | Version conforme |
 |---|---|
-| Comite audit – proces verbal – 14 sept 2025 brouillon 2.docx | CAUD-PV-2025-09-14-VT.docx |
-| Comite d'audit – PV – 25 mars 2025 v1.docx | CAUD-PV-2025-03-25-VFA.docx |
-
-Problèmes dans la version à éviter : nom non standardisé, accents et espaces incompatibles, date ambiguë, mention de version contradictoire.
+| Comite audit – proces verbal – 14 sept 2025 brouillon 2.docx | CAUD-PV-2025-09-14-reguliere-VT.docx |
+| Comite d'audit – PV – 25 mars 2025 v1.docx | CAUD-PV-2025-03-25-reguliere-VFA.docx |
 
 ### Exemple 2 — Rapport du comité RH
 
@@ -169,32 +164,36 @@ Problèmes dans la version à éviter : nom non standardisé, accents et espaces
 
 ## Gouvernance de la nomenclature
 
-> **Pourquoi des règles de gouvernance ?**
-> Une nomenclature n'est utile que si tout le monde l'applique de la même façon. Une seule personne qui invente ses propres codes suffit à briser la cohérence du système.
+La liste officielle des codes vit dans une page Markdown de la bibliothèque centrale, mise à jour quand un code est ajouté. Demander à la DG avant d'ajouter un code.
 
-### Responsabilités
+---
 
-| Rôle | Responsabilité |
-|---|---|
-| Direction générale | Valider et maintenir la liste des codes (comités, départements, sujets récurrents) |
-| Adjointe de direction | Superviser l'application de la nomenclature et former les nouveaux membres du personnel |
-| Tout le personnel | Appliquer la nomenclature pour tout nouveau document créé |
-| Tout le personnel | Consulter avant de créer un nouveau code ou une nouvelle abréviation |
+## Noms publics distincts des noms codés
 
-### Règles immuables
+Tout document avec **Diffusion = Membres** ou **Diffusion = Public** existe sous deux noms.
 
-- Aucun employé ne peut créer de nouveaux codes de façon autonome
-- Les codes existants ne peuvent pas être renommés sans validation de la direction générale
-- La liste officielle des codes vit dans un fichier central : `ADM-INV-codes-nomenclature-[AAAA-MM-JJ]-VFP.xlsx`
-- Ce fichier est mis à jour au moins une fois par année
+| Endroit | Format du nom | Exemple |
+|---|---|---|
+| Bibliothèque centrale (interne) | Nomenclature codée complète | `AFPRO-LDIR-Gestion-acouphenes-2025-07-01-VFP.pdf` |
+| Publication sur Octave ou site public | Nom propre lisible | `Lignes directrices — Gestion des acouphènes (juillet 2025).pdf` |
 
-### Évolution du système
+### Pourquoi
 
-Toute évolution de la nomenclature doit :
-1. Être approuvée par la direction générale
-2. Faire l'objet d'une communication à toute l'équipe
-3. Être documentée dans le fichier central des codes
-4. Ne pas modifier rétroactivement les fichiers existants (sauf exception justifiée)
+Les codes existent pour Alice, l'équipe interne et la recherche par l'IA. Les membres et le public reçoivent un nom qui communique la valeur du document, pas son histoire administrative.
+
+### Mise en œuvre
+
+Le pipeline OAQ-v2 peut générer automatiquement le nom propre à partir des métadonnées (type de document + sujet + date), au moment de la publication. Alice valide.
+
+### Documents concernés
+
+- Tous les COMEX (infolettres, communiqués, avis aux membres)
+- Lignes directrices (LDIR) publiées
+- Guides publiés
+- Rapports annuels (RAP) publics
+- Politiques (POL) si publiées au public
+
+Les POL, PRO, FS, PV, COMIN qui restent à l'interne conservent uniquement leur nom codé.
 
 ---
 

@@ -1,5 +1,5 @@
 # Phase 1 — Architecture Teams
-## Gestion documentaire 2.0 — OAQ
+## Gestion documentaire 3.0 — OAQ
 
 *Printemps 2026*
 
@@ -33,19 +33,21 @@ L'OAQ utilise quatre types d'espaces Teams distincts, selon la nature des collab
 
 Les permissions sont gérées au niveau de l'équipe (Team), jamais au niveau du canal. Si un groupe de personnes a besoin d'un accès différent, on crée une équipe distincte ou un canal privé justifié. On ne modifie jamais les permissions canal par canal.
 
+Chaque équipe est créée avec deux propriétaires dès le départ, pour qu'aucune équipe ne dépende d'une seule personne.
+
 ---
 
-## Canaux permanents — OAQ — Général
+## Une seule équipe par comité statutaire
 
-L'équipe OAQ — Général est l'espace de communication de toute l'équipe interne. Elle contient trois canaux permanents.
+L'architecture par comité est conservée pour une raison simple : **Teams est l'unité de gestion des autorisations dans M365**. Chaque comité statutaire a des membres externes au personnel (audioprothésistes du C.A., invités), et une équipe par comité permet de gérer l'arrivée et le départ d'un membre par une seule action — le retirer de l'équipe.
 
-| Canal | Contenu |
-|---|---|
-| Général | Annonces officielles, communications à toute l'équipe |
-| Ressources | Documents de référence permanents (procédures, guides) |
-| Administratif | Calendriers, horaires, logistique interne |
+---
 
-Ces canaux sont permanents et ne peuvent pas être renommés ni supprimés.
+## Canaux dans OAQ — Général
+
+L'équipe OAQ — Général a un seul canal permanent : **Général**, qui sert aux annonces officielles et aux communications à toute l'équipe.
+
+Les documents de référence (procédures, guides) et les éléments administratifs (calendriers, horaires, logistique) vivent dans l'onglet Fichiers de ce canal, organisés dans deux dossiers : `Ressources/` et `Administratif/`. Pas de canaux séparés — c'est inutile pour 6 personnes et ça encombre la barre latérale.
 
 ---
 
@@ -62,25 +64,15 @@ Quand un employé doit démarrer un nouveau projet, ce canal contient tout ce do
 
 ---
 
-## Canaux à accès restreint
+## Canaux privés d'évaluation
 
-Deux canaux privés existent au sein de leurs équipes respectives pour des évaluations confidentielles.
-
-| Équipe | Canal privé | Personnes exclues | Personnes incluses |
-|---|---|---|---|
-| OAQ — Comité de gouvernance et éthique | Évaluation-Président | La présidence | Membres du CGOU uniquement |
-| OAQ — Comité des ressources humaines | Évaluation-DG | La direction générale | Membres du CRH uniquement |
-
-> **Pourquoi des canaux privés pour ces évaluations ?**
-> Les canaux privés créent une sous-bibliothèque SharePoint distincte, invisible aux personnes exclues. Ces deux canaux permettent aux comités compétents de conduire les évaluations annuelles sans que la personne évaluée ait accès aux échanges, aux documents de travail ou aux délibérations.
-
-La création de canaux privés est réservée à l'administration TI, sur demande de la direction générale.
+Deux canaux privés existent dans leurs équipes respectives pour des évaluations annuelles confidentielles : `Évaluation-Président` dans l'équipe CGOU (la présidence est exclue), et `Évaluation-DG` dans l'équipe CRH (la direction générale est exclue). Ce sont des canaux privés normaux, créés par la personne qui en a besoin (David ou Alice) sans procédure particulière.
 
 ---
 
 ## Liste des équipes Teams de l'OAQ
 
-Ces équipes sont créées et configurées par l'administration TI. Toutes les équipes sont de type **privé** : les membres y sont invités, personne ne peut y accéder sans invitation explicite.
+Toutes les équipes sont de type **privé** : les membres y sont invités, personne ne peut y accéder sans invitation explicite.
 
 | Nom de l'équipe | Membres initiaux |
 |---|---|
@@ -94,39 +86,14 @@ Ces équipes sont créées et configurées par l'administration TI. Toutes les �
 | OAQ — Comité d'inspection professionnelle | Membres CIP + personnel désigné |
 | OAQ — [Autres comités selon besoins] | Membres respectifs + personnel désigné |
 
-> **Pourquoi la création des équipes est-elle réservée à l'administration TI ?**
-> Chaque équipe Teams crée automatiquement un site SharePoint associé avec ses propres permissions. Une équipe créée par erreur ou en double produit une confusion durable et difficile à corriger. La création centralisée garantit une structure cohérente et auditable.
+> **Pourquoi une équipe par comité plutôt qu'un seul espace partagé ?**
+> Chaque équipe Teams crée automatiquement un site SharePoint associé avec ses propres permissions. Une équipe par comité permet d'inclure les membres externes du comité (administrateurs, invités) sans leur donner accès au reste de l'OAQ. Une seule action — retirer la personne de l'équipe — gère son départ entièrement.
 
 ---
 
-## Règles de gouvernance
+## Départ d'un membre
 
-| Règle | Détail |
-|---|---|
-| Création des équipes | Réservée à l'administration TI |
-| Propriétaires par équipe | Minimum 2 propriétaires par équipe Teams en tout temps |
-| Création des canaux | Les employés peuvent créer des canaux dans les équipes auxquelles ils appartiennent |
-| Canaux privés | Créés par l'administration TI sur demande de la direction générale |
-| Enregistrements de réunions | Supprimés automatiquement après 60 jours |
-| Canaux archivés | Conservés indéfiniment, consultables en lecture seule |
-
-> **Pourquoi exiger 2 propriétaires par équipe ?**
-> Si la seule personne propriétaire d'une équipe quitte l'OAQ, l'équipe devient orpheline : personne ne peut modifier les membres, les canaux ou les permissions sans intervention de l'administration TI. Deux propriétaires garantissent la continuité en cas de départ ou d'absence prolongée.
-
-> **Pourquoi supprimer les enregistrements après 60 jours ?**
-> Les enregistrements vidéo occupent un volume de stockage important et contiennent souvent des discussions préliminaires qui n'ont pas vocation à être conservées. Les décisions prises en réunion sont documentées dans les comptes rendus et procès-verbaux — c'est ce qui constitue la mémoire institutionnelle officielle.
-
----
-
-## Responsabilités
-
-| Rôle | Responsabilité |
-|---|---|
-| Administration TI | Créer toutes les équipes Teams et les canaux privés |
-| Direction générale | Approuver toute demande de nouvelle équipe ou de canal privé |
-| Direction générale | Coordonner les ajouts et retraits de membres avec l'administration TI |
-| Tout le personnel | Utiliser les espaces existants — ne pas créer d'équipes sans autorisation |
-| Tout le personnel | Tenir toutes les conversations de projet dans les canaux appropriés, jamais par courriel |
+Quand un membre quitte un comité ou l'OAQ, on le retire de toutes les équipes auxquelles il appartient. Ses contributions restent dans les canaux et la bibliothèque. Aucune autre action n'est requise — c'est le bénéfice direct du choix « une équipe = un ensemble de permissions ».
 
 ---
 
